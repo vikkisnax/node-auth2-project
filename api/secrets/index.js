@@ -7,5 +7,8 @@
   developers cloning this repo won't be able to run the project as is.
  */
 module.exports = {
+  //pull info from environment (env)
+  //provide fallback (shh) so developers cloning project w/o the jwt secret to run project
+  JWT_SECRET: process.env.JWT_SECRET || 'shh',
 
 }
