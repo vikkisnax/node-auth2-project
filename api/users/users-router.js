@@ -27,6 +27,9 @@ router.get("/", restricted, (req, res, next) => { // done for you
     .catch(next);
 });
 
+
+
+
 /**
   [GET] /api/users/:user_id
 
