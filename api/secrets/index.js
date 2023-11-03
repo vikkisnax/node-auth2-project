@@ -10,5 +10,6 @@ module.exports = {
   //pull info from environment (env)
   //provide fallback (shh) so developers cloning project w/o the jwt secret to run project
   JWT_SECRET: process.env.JWT_SECRET || 'shh',
+  BCRYPT_ROUNDS: process.env.BCRYPT_ROUNDS || 8,
 
 }

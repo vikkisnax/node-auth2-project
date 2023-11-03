@@ -1,6 +1,10 @@
+const bcrypt = require('bcryptjs'); // npm i bcryptjs
+
 const router = require("express").Router();
 const { checkUsernameExists, validateRoleName } = require('./auth-middleware');
-const { JWT_SECRET } = require("../secrets"); // use this secret!
+const User = require('../users/users-model')
+
+const { BCRPYT_ROUNDS, JWT_SECRET } = require("../secrets"); // use this secret! and add info to file
 
 //write mw for validateRoleName then do this endpoint
 router.post("/register", validateRoleName, (req, res, next) => {
@@ -15,6 +19,21 @@ router.post("/register", validateRoleName, (req, res, next) => {
       "role_name": "angel"
     }
    */
+
+  const { username, password } = req.body
+  const { role_name } = req
+
+  // bcrypting the password before saving
+  const hash = bcrypt.hashSync(password, BCRPYT_ROUNDS)
+ // never save the plain text password in the db
+ // username.password = hash // or do password:hash below
+
+  User.add({ username, password:hash, role_name })
+    .then( newUser => {
+      res.status(201).json(newUser)
+    })
+    .catch(next) // same as .catch(err=>{next(err)})
+
 });
 
 

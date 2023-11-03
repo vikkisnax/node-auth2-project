@@ -95,14 +95,13 @@ function findById(user_id) {
     .select(
       'u.user_id',
       'u.username',
-      'u.password',
+      // 'u.password',
       'r.role_name'
     )
     //select all that ^ where the user id is the same as the user id in the findById param
     .where('u.user_id', user_id)
     //return the first user 
     .first()
-
 }
 
 /**
