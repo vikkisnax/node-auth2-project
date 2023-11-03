@@ -33,7 +33,6 @@ router.post("/register", validateRoleName, (req, res, next) => {
       res.status(201).json(newUser)
     })
     .catch(next) // same as .catch(err=>{next(err)})
-
 });
 
 
