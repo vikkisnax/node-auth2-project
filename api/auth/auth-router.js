@@ -89,9 +89,6 @@ router.post("/login", checkUsernameExists, (req, res, next) => {
     }
     return jwt.sign(payload, JWT_SECRET, options)
   }
-  
-
-
 });
 
 module.exports = router;
