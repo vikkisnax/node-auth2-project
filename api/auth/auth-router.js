@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs'); // npm i bcryptjs
+const jwt = require('jsonwebtoken'); 
 
 const router = require("express").Router();
 const { checkUsernameExists, validateRoleName } = require('./auth-middleware');
@@ -56,6 +57,41 @@ router.post("/login", checkUsernameExists, (req, res, next) => {
       "role_name": "admin" // the role of the authenticated user
     }
    */
+  
+  //compare password that user inputs to password in db
+  if(bcrypt.compareSync(req.body.password, req.user.password)){
+    //if credentials match/passwords are legit, we create token and send back to user
+    const token = buildToken(req.user)
+    res.json({
+      status:200,
+      message: `${req.user.username} is back`,
+      token
+    })
+  } else {
+    next({
+      status: 401,
+      message: "invalid credentials"
+    })
+  }
+  
+  //helper function for token that takes user info from db.
+  // we can access user_id, etc bc of findBy code in users model 
+  function buildToken(user){
+    const payload = {
+      //token will have these \/ 'claims' that it'll include
+      subject: user.user_id,
+      role_name: user.role_name,
+      username: user.username
+    }
+    //we need options \/ for expiration
+    const options = {
+      expiresIn: '1d',
+    }
+    return jwt.sign(payload, JWT_SECRET, options)
+  }
+  
+
+
 });
 
 module.exports = router;
