@@ -17,6 +17,8 @@ const { restricted, only } = require("../auth/auth-middleware.js");
     }
   ]
  */
+//only authenticated users allowed, but data access is free after user gets in (can write more code to limit access)
+//see what restricted mw in auth is doing
 router.get("/", restricted, (req, res, next) => { // done for you
   Users.find()
     .then(users => {
@@ -24,6 +26,9 @@ router.get("/", restricted, (req, res, next) => { // done for you
     })
     .catch(next);
 });
+
+
+
 
 /**
   [GET] /api/users/:user_id
@@ -40,6 +45,8 @@ router.get("/", restricted, (req, res, next) => { // done for you
     }
   ]
  */
+
+//to get user by id, restricted makes sure that only authorized users are allowed, only users with the correct ' admin' role are allowed 
 router.get("/:user_id", restricted, only('admin'), (req, res, next) => { // done for you
   Users.findById(req.params.user_id)
     .then(user => {

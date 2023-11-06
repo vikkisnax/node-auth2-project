@@ -1,6 +1,6 @@
 const db = require('../../data/db-config.js');
 
-function find() {
+async function find() {
   /**
     You will need to join two tables.
     Resolves to an ARRAY with all users.
@@ -17,7 +17,26 @@ function find() {
         "role_name": "instructor"
       }
     ]
-   */
+  
+    // SQL
+    select
+      user_id, 
+      username,
+      role_name
+    from users
+    join roles on
+      user.role_id = roles.role_id;
+   **/
+
+  // I put auth.db3 into sqlite studio to look at tables
+  const userRows = await db('users as u')
+  .leftJoin('roles as r', 'r.role_id', 'u.role_id')
+  .select(
+    'u.user_id',
+    'u.username',
+    'r.role_name'
+  )
+  return userRows
 }
 
 function findBy(filter) {
@@ -33,7 +52,30 @@ function findBy(filter) {
         "role_name": "admin",
       }
     ]
+
+    // SQL
+    select
+      user_id, 
+      username,
+      password,
+      role_name
+    from users
+    join roles on
+      user.role_id = roles.role_id;
+    where users.user_id = 1;
    */
+
+  // nothing is using this model function rn so just do it and commit 
+  return db('users as u')
+    .join('roles as r', 'r.role_id', 'u.role_id')
+    .select(
+      'u.user_id',
+      'u.username',
+      'u.password',
+      'r.role_name'
+    )
+    //select all that where we search/filter for a user
+    .where(filter)
 }
 
 function findById(user_id) {
@@ -47,6 +89,19 @@ function findById(user_id) {
       "role_name": "instructor"
     }
    */
+  //see what endpoint uses it and httpie it 
+  return db('users as u')
+    .join('roles as r', 'r.role_id', 'u.role_id')
+    .select(
+      'u.user_id',
+      'u.username',
+      // 'u.password',
+      'r.role_name'
+    )
+    //select all that ^ where the user id is the same as the user id in the findById param
+    .where('u.user_id', user_id)
+    //return the first user 
+    .first()
 }
 
 /**
