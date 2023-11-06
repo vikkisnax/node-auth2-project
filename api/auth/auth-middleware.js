@@ -67,7 +67,7 @@ const checkUsernameExists = async (req, res, next) => {
       "message": "Invalid credentials"
     }
   */
-    try{
+    try {
       const [user] = await findBy({username: req.body.username})
       if(!user){
         next({

@@ -37,6 +37,7 @@ router.post("/register", validateRoleName, (req, res, next) => {
 });
 
 
+//write CUE mw first and require jwt
 router.post("/login", checkUsernameExists, (req, res, next) => {
   /**
     [POST] /api/auth/login { "username": "sue", "password": "1234" }
