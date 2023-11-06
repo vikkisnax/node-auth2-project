@@ -22,27 +22,26 @@ const restricted = (req, res, next) => {
     Put the decoded token in the req object, to make life easier for middlewares downstream!
   */
 const token = req.headers.authorization
-
-if(token) {
+if(!token) {
+  return next({
+    status: 401,
+    message: "Token required"
+  })
+}
   jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
-    if (err){
+    if (err) {
       next({
         status: 401,
-        message: "Token required"
+        message: "Token Invalid"
       })
-    } else{
-      req.decodedJWT = decodedToken
-      console.log('decodedToken:', req.decodedToken)
+    } else {
+      req.decodedToken = decodedToken
+      // console.log('decodedToken:', req.decodedToken)
       next()
     }
   })
-} else{
-  next({
-    status: 401,
-    message: "Token invalid"
-  })
 }
-}
+
 
 const only = role_name => (req, res, next) => {
   /*
@@ -55,7 +54,15 @@ const only = role_name => (req, res, next) => {
 
     Pull the decoded token from the req object, to avoid verifying it again!
   */
-    next()
+    //by the time the request flows through users-router get user id, it already went through the restricted mw, so role name should be on the req object bc of line 34
+    if (role_name === req.decodedToken.role_name){
+      next()
+    } else {
+      next({
+        status: 403,
+        message: "This is not for you"
+      })
+    }
 }
 
 
@@ -71,7 +78,7 @@ const checkUsernameExists = async (req, res, next) => {
       const [user] = await findBy({username: req.body.username})
       if(!user){
         next({
-          status: 422,
+          status: 401,
           message: "Invalid credentials"
         })
       } else{
